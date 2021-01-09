@@ -1,0 +1,31 @@
+.checkbox
+    cursor: pointer
+    position: relative
+    padding-left: 22px
+    input[type="checkbox"]
+        display: none
+    input[type="checkbox"]:checked + span:after
+        opacity: 1
+    input[type="checkbox"] + span:after
+        content: ""
+        display: block
+        position: absolute
+        width: 10px
+        height: 8px
+        border-radius: 3px
+        background: #0094FF
+        top: 5px
+        left: 2px
+        opacity: 0
+        transition: 0.3s
+    span:before
+        content: ""
+        display: block
+        position: absolute
+        width: 14px
+        height: 14px
+        border-radius: 3px
+        border: 1px solid #0094FF
+        top: 2px
+        left: 0
+        box-sizing: border-box

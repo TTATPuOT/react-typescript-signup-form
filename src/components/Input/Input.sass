@@ -1,0 +1,42 @@
+@font-face
+    font-family: 'roboto-password'
+    src: url('font/roboto-password.eot')
+    src: url('font/roboto-password.eot') format('embedded-opentype'),
+    url('font/roboto-password.woff2') format('woff2'),
+    url('font/roboto-password.woff') format('woff'),
+    url('font/roboto-password.ttf') format('truetype'),
+    url('font/roboto-password.svg#roboto-password') format('svg')
+    font-weight: normal
+    font-style: normal
+
+@mixin placeholder
+    &::-webkit-input-placeholder
+        @content
+    &:-moz-placeholder
+        @content
+    &::-moz-placeholder
+        @content
+    &:-ms-input-placeholder
+        @content
+
+input.input
+    background-repeat: no-repeat
+    background-color: #F5F8FA
+    border-radius: 8px
+    width: 100%
+    border: 0
+    font-size: 14px
+    padding: 18px 18px 17px
+    box-sizing: border-box
+    letter-spacing: -0.1px
+    @include placeholder
+        color: #A2A2A2
+    &[type="email"]
+        background-image: url("img/email.svg")
+        background-position: 18px 50%
+        padding-left: 52px
+    &[type="password"]
+        font-family: roboto-password, Roboto, Arial, sans-serif
+        background-image: url("img/password.svg")
+        background-position: 18px calc(50% - 3px)
+        padding-left: 52px

@@ -1,0 +1,36 @@
+.radio
+    display: flex
+    justify-content: flex-start
+    label
+        position: relative
+        line-height: 17px
+        margin-right: 25px
+        padding-left: 22px
+        cursor: pointer
+        span:before
+            content: ""
+            height: 14px
+            width: 14px
+            border: 1px solid #0094FF
+            border-radius: 50%
+            position: absolute
+            display: block
+            left: 0
+            top: 1px
+            box-sizing: border-box
+        input[type="radio"]
+            display: none
+        input[type="radio"]:checked + span:after
+            opacity: 1
+        input[type="radio"] + span:after
+            content: ""
+            height: 8px
+            width: 8px
+            background: #0094FF
+            border-radius: 50%
+            position: absolute
+            display: block
+            left: 3px
+            top: calc(50% - 5px)
+            opacity: 0
+            transition: 0.3s
