@@ -7,6 +7,7 @@ interface SelectProps {
     options: string[]
     handleChange?: (value: string) => any
     placeholder?: string
+    name?: string
 }
 
 const Select = (props: SelectProps) => {
@@ -30,6 +31,7 @@ const Select = (props: SelectProps) => {
             value={value}
             autoComplete={"off"}
             onClick={() => setOpen(!open)}
+            name={props.name ?? ""}
             ref={inputRef}
             readOnly
         />

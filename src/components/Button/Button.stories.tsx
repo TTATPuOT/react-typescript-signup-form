@@ -1,10 +1,24 @@
 import React from "react";
-import { Meta } from '@storybook/react/types-6-0';
+import {Meta, Story} from '@storybook/react/types-6-0';
 import Button from "./index";
+import {ButtonProps} from "./Button";
 
-export const Primary = () => <Button>Button</Button>;
-export const Disabled = () => <Button disabled>Button</Button>;
+/*const ButtonPrimary = (disabled: boolean) => <Button disabled={disabled}>Button</Button>;
+export const Primary = ButtonPrimary.bind({
+    disabled: false
+});*/
 
 export default {
-    title: 'Forms/Button'
+    title: 'Forms/Buttons',
+    argTypes: {
+        disabled: {
+            name: "Is button disabled",
+            control: {
+                type: 'boolean',
+            },
+        },
+    },
 } as Meta;
+
+export const Primary: Story<ButtonProps> = ({ disabled }) =>
+    <Button disabled={disabled}>Button</Button>;

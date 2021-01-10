@@ -1,6 +1,8 @@
 import React from 'react';
 import "./Loader.sass";
 
-const Loader = () => <div className="loader" />;
+interface LoaderProps extends React.HTMLAttributes<HTMLDivElement> {}
+
+const Loader = (props: LoaderProps) => <div {...props} className="loader" />;
 
 export default Loader;

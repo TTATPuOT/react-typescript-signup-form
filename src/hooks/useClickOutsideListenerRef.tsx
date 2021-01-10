@@ -4,7 +4,7 @@ const useClickOutsideListenerRef = (onClose: () => void) => {
     const ref = useRef(null);
 
     const escapeListener = useCallback((e: KeyboardEvent) => {
-        if (e.key === 'Escape') onClose();
+        if (e.key === "Escape") onClose();
     }, [onClose]);
 
     const clickListener = useCallback(
@@ -15,11 +15,11 @@ const useClickOutsideListenerRef = (onClose: () => void) => {
     );
 
     useEffect(() => {
-        document.addEventListener('click', clickListener)
-        document.addEventListener('keyup', escapeListener)
+        document.addEventListener("click", clickListener)
+        document.addEventListener("keyup", escapeListener)
         return () => {
-            document.removeEventListener('click', clickListener)
-            document.removeEventListener('keyup', escapeListener)
+            document.removeEventListener("click", clickListener)
+            document.removeEventListener("keyup", escapeListener)
         }
     }, [clickListener, escapeListener]);
 

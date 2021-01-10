@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState} from 'react';
 import * as yup from "yup";
 import Input from "../Input";
 import Select from "../Select";
@@ -18,7 +18,7 @@ const schema = yup.object().shape({
     email: yup.string().email("Please enter a valid email address").required(),
     password: yup.string().required().min(6, "Password must contain at least 6 symbols"),
     country: yup.string().required().oneOf(Data.countries),
-    gander: yup.string().required().oneOf(["Male", "Female"]),
+    gender: yup.string().required().oneOf(["Male", "Female"]),
     accept: yup.boolean().required().oneOf([true], "You must accept the policies")
 });
 
@@ -36,10 +36,13 @@ export type ErrorType = {
     text: string
 };
 
-export interface FormProps extends React.HTMLAttributes<HTMLFormElement> {}
+export interface FormProps extends React.HTMLAttributes<HTMLFormElement> {
+    onDone?: (token: string) => void
+    onFail?: (reason: string) => void
+}
 
 const Form = (props: FormProps) => {
-    const [data, setData] = useState<FormData>({  });
+    const [data, setData] = useState<FormData>({});
     const [valid, setValid] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(false);
     const [errors, setErrors] = useState<ErrorType[]>([]);
@@ -48,7 +51,31 @@ const Form = (props: FormProps) => {
 
     const handleChange = (name: string, value: string|boolean) => {
         const newData = Object.assign({}, data, { [name]: value });
-        setData(newData);
+
+        schema
+            .validate(newData, { abortEarly: false })
+            .then(() => {
+                setValid(true);
+                setErrors([]);
+                setData(newData);
+            })
+            .catch(e => {
+                const array: ErrorType[] = [];
+
+                if (e.inner.length) {
+                    for (const error of e.inner) {
+                        //@ts-ignore
+                        if (data[error.path] !== undefined) {
+                            array.push({
+                                name: error.path,
+                                text: error.message
+                            });
+                        }
+                    }
+                }
+                setErrors(array);
+                setData(newData);
+            });
     };
 
     const handleInputChange = ({ target, currentTarget }: React.FormEvent<HTMLInputElement|HTMLSelectElement>) => {
@@ -76,46 +103,30 @@ const Form = (props: FormProps) => {
                     }
                 } })
                 .then(response => {
-                    alert(`Регистрация завершена, токен: ${response.data?.createUser.token}`);
+                    console.log(response);
+                    if (props.onDone)
+                        props.onDone(`Регистрация завершена, токен: ${response.data?.createUser.token}`);
+
                     setLoading(false);
                 })
                 .catch(e => {
+                    console.error(e);
                     setErrors([{
                         name: "email",
                         text: e.message
                     }]);
                     setLoading(false);
+
+                    if (props.onFail) props.onFail(e.message);
                 });
         }
     }
 
-    useEffect(() => {
-        schema
-            .validate(data, { abortEarly: false })
-            .then(() => {
-                setValid(true);
-                setErrors([]);
-            })
-            .catch(e => {
-                const array: ErrorType[] = [];
+    const formProps = { ...props };
+    delete formProps.onDone;
+    delete formProps.onFail;
 
-                if (e.inner.length) {
-                    for (const error of e.inner) {
-                        //@ts-ignore
-                        if (data[error.path] !== undefined) {
-                            array.push({
-                                name: error.path,
-                                text: error.message
-                            });
-                        }
-                    }
-                }
-
-                setErrors(array);
-            });
-    }, [data]);
-
-    return <form className="register-form" {...props}>
+    return <form className="register-form" {...formProps}>
         <h1>Create a new account</h1>
 
         <div className="row">
@@ -150,6 +161,7 @@ const Form = (props: FormProps) => {
         </div>
         <div className="row">
             <Select
+                name="country"
                 value={data.country ?? ""}
                 handleChange={(value: string) => handleChange("country", value)}
                 placeholder="Select country"
@@ -160,7 +172,7 @@ const Form = (props: FormProps) => {
         <div className="row row-radio">
             <Radio
                 options={["Male", "Female"]}
-                name="gander"
+                name="gender"
                 onChange={(e) => handleInputChange(e)}
             />
             <Error errors={errors} name="gender" />

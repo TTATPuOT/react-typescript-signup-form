@@ -7,7 +7,7 @@ interface InputProps extends React.HTMLAttributes<HTMLInputElement>  {
     name: string
 }
 
-const Input = (props: InputProps) => {
+const Radio = (props: InputProps) => {
     return <div className="radio">
         {props.options.map(o => <label key={o}>
             <input type="radio" value={o} {...props} />
@@ -16,4 +16,4 @@ const Input = (props: InputProps) => {
     </div>;
 }
 
-export default Input;
+export default Radio;

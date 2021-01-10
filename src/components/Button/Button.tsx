@@ -1,7 +1,7 @@
 import React from 'react';
 import "./Button.sass";
 
-interface ButtonProps extends React.HTMLAttributes<HTMLButtonElement> {
+export interface ButtonProps extends React.HTMLAttributes<HTMLButtonElement> {
     type?: "button"|"submit"|"reset"
     disabled?: boolean
 }

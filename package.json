@@ -6,9 +6,9 @@
     "@apollo/client": "^3.3.6",
     "@fontsource/roboto": "^4.1.0",
     "@testing-library/jest-dom": "^4.2.4",
-    "@testing-library/react": "^9.3.2",
+    "@testing-library/react": "^11.2.3",
     "@testing-library/user-event": "^7.1.2",
-    "@types/jest": "^24.0.0",
+    "@types/jest": "^24.9.0",
     "@types/node": "^12.0.0",
     "@types/react": "^16.9.0",
     "@types/react-dom": "^16.9.0",
@@ -26,7 +26,8 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "storybook": "start-storybook -p 9009 -s public",
-    "build-storybook": "build-storybook -s public"
+    "build-storybook": "build-storybook -s public",
+    "test:jest": "jest"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -45,9 +46,18 @@
   },
   "devDependencies": {
     "@storybook/addon-actions": "^6.1.11",
+    "@storybook/addon-controls": "^6.1.11",
     "@storybook/addon-links": "^6.1.11",
     "@storybook/addons": "^6.1.11",
     "@storybook/preset-create-react-app": "^3.1.5",
-    "@storybook/react": "^6.1.11"
+    "@storybook/react": "^6.1.11",
+    "@types/testing-library__jest-dom": "^5.9.5",
+    "@types/testing-library__react": "^10.2.0",
+    "add": "^2.0.6",
+    "identity-obj-proxy": "^3.0.0",
+    "jest": "^24.9.0",
+    "jest-environment-jsdom-sixteen": "^1.0.3",
+    "ts-jest": "^24.3.0",
+    "yarn": "^1.22.10"
   }
 }

@@ -1,7 +1,7 @@
 import React from 'react';
 import "./Input.sass";
 
-interface InputProps extends React.HTMLAttributes<HTMLInputElement> {
+export interface InputProps extends React.HTMLAttributes<HTMLInputElement> {
     value: string
     type: string
     name?: string
