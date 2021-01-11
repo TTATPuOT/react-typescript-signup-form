@@ -2,8 +2,9 @@ import React from 'react';
 import { render, RenderResult, cleanup, fireEvent, act, waitFor } from '@testing-library/react';
 import { MockedProvider } from "@apollo/client/testing";
 import Form from "../components/Form";
-import {CREATE_USER} from "../components/Form/mutations";
+import {SIGN_UP} from "../components/Form/mutations";
 import * as Data from "../Data";
+import {GraphQLError} from "graphql";
 
 let documentBody: RenderResult;
 
@@ -14,31 +15,35 @@ export default describe('Signup form', () => {
         const mocks = [
             {
                 request: {
-                    query: CREATE_USER,
+                    query: SIGN_UP,
                     variables: {
                         user: {
                             email: "test@test.ru",
                             password: "123456",
-                            fullName: "success",
+                            name: "success",
+                            gender: "MALE",
                             country: Data.countries[0]
                         }
                     },
                 },
-                result: { data: { createUser: { token: "TOKEN" } } },
+                result: { data: { signup: true } },
             },
             {
                 request: {
-                    query: CREATE_USER,
+                    query: SIGN_UP,
                     variables: {
                         user: {
                             email: "test@test.ru",
                             password: "123456",
-                            fullName: "fail",
+                            name: "fail",
+                            gender: "MALE",
                             country: Data.countries[0]
                         }
                     },
                 },
-                result: { data: { createUser: { token: "TOKEN" } } },
+                result: {
+                    errors: [new GraphQLError("Any error")],
+                },
             },
         ];
 
@@ -47,7 +52,7 @@ export default describe('Signup form', () => {
         return documentBody.getByTestId('form');
     }
 
-    const setData = async (form: HTMLElement, fullName: string, email: string) => {
+    const setData = async (form: HTMLElement, name: string, email: string) => {
         const setValue = async (name: string, value: string) => {
             act(() => {
                 // @ts-ignore
@@ -56,7 +61,7 @@ export default describe('Signup form', () => {
             await waitFor(() => expect(documentBody.getByDisplayValue(value)).toBeInTheDocument());
         }
 
-        await setValue("fullName", fullName);
+        await setValue("name", name);
         await setValue("email", email);
         await setValue("password", "123456");
 
@@ -98,11 +103,13 @@ export default describe('Signup form', () => {
     });
 
     it('Form error request', async () => {
-        const onDone = jest.fn();
-        const form = setup({ onDone });
+        const onFail = jest.fn();
+        const form = setup({ onFail });
 
         await setData(form, "fail", "test@test.ru");
 
-        await waitFor(() => expect(onDone).toHaveBeenCalledTimes(1))
+        await waitFor(() => expect(onFail).toHaveBeenCalledTimes(1))
+        await waitFor(() => expect(documentBody.getByText("Any error")).toBeInTheDocument())
+        await waitFor(() => expect(documentBody.getByText("Any error")).toHaveClass("error"))
     });
 })

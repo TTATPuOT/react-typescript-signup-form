@@ -8,9 +8,12 @@ interface InputProps extends React.HTMLAttributes<HTMLInputElement>  {
 }
 
 const Radio = (props: InputProps) => {
+    const otherProps = {...props};
+    delete otherProps.value;
+
     return <div className="radio">
         {props.options.map(o => <label key={o}>
-            <input type="radio" value={o} {...props} />
+            <input type="radio" value={o} {...otherProps} defaultChecked={o === props.value} />
             <span>{o}</span>
         </label>)}
     </div>;

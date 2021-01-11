@@ -4,6 +4,7 @@ import "./Checkbox.sass";
 interface CheckboxProps extends React.HTMLAttributes<HTMLInputElement> {
     children?: React.ReactNode
     name?: string
+    checked?: boolean
 }
 
 const Checkbox = (props: CheckboxProps) => {

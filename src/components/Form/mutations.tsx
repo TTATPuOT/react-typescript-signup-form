@@ -1,20 +1,25 @@
 import { gql } from '@apollo/client';
 
-export interface CreateUserInput {
+export interface SignupInput {
     email: string
     password: string
-    fullName: string
+    name: string
     country: string
+    gender: string
 }
 
-export interface AuthPayloadType {
+export interface UserType {
     token: string
 }
 
-export const CREATE_USER = gql`
-    mutation CreateUser($user: CreateUserInput!) {
-        createUser(input: $user) {
-            token
+export const SIGN_UP = gql`
+    mutation SignUp($user: SignupInput!) {
+        signup(input: $user) {
+            id
+            name
+            email
+            country
+            gender
         }
     }
 `;

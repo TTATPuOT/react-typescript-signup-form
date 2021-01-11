@@ -7,14 +7,14 @@ import Checkbox from "../Checkbox";
 import Button from "../Button";
 import * as Data from "../../Data";
 import {useMutation} from "@apollo/client";
-import {AuthPayloadType, CREATE_USER, CreateUserInput} from "./mutations";
+import {UserType, SIGN_UP, SignupInput} from "./mutations";
 import Error from "./Error";
 import Loader from "../Loader";
 
 import "./Form.sass";
 
 const schema = yup.object().shape({
-    fullName: yup.string().required().matches(/^[A-z ]*$/gm, "Please enter a valid name"),
+    name: yup.string().required().matches(/^[A-z ]*$/gm, "Please enter a valid name"),
     email: yup.string().email("Please enter a valid email address").required(),
     password: yup.string().required().min(6, "Password must contain at least 6 symbols"),
     country: yup.string().required().oneOf(Data.countries),
@@ -23,7 +23,7 @@ const schema = yup.object().shape({
 });
 
 type FormData = {
-    fullName?: string
+    name?: string
     email?: string
     password?: string
     country?: string
@@ -47,7 +47,7 @@ const Form = (props: FormProps) => {
     const [loading, setLoading] = useState<boolean>(false);
     const [errors, setErrors] = useState<ErrorType[]>([]);
 
-    const [ createUser ] = useMutation<{createUser: AuthPayloadType}, {user: CreateUserInput}>(CREATE_USER);
+    const [ createUser ] = useMutation<{signup: UserType}, {user: SignupInput}>(SIGN_UP);
 
     const handleChange = (name: string, value: string|boolean) => {
         const newData = Object.assign({}, data, { [name]: value });
@@ -57,7 +57,6 @@ const Form = (props: FormProps) => {
             .then(() => {
                 setValid(true);
                 setErrors([]);
-                setData(newData);
             })
             .catch(e => {
                 const array: ErrorType[] = [];
@@ -73,7 +72,11 @@ const Form = (props: FormProps) => {
                         }
                     }
                 }
+
                 setErrors(array);
+                setValid(false);
+            })
+            .finally(() => {
                 setData(newData);
             });
     };
@@ -92,32 +95,32 @@ const Form = (props: FormProps) => {
     };
 
     const mutateCreateUser = () => {
-        if (data.email && data.password && data.fullName && data.country) {
+        if (data.email && data.password && data.name && data.country && data.gender) {
             setLoading(true);
             createUser({ variables: {
                     user: {
                         email: data.email,
                         password: data.password,
-                        fullName: data.fullName,
+                        name: data.name,
                         country: data.country,
+                        gender: data.gender.toLocaleUpperCase(),
                     }
                 } })
                 .then(response => {
-                    console.log(response);
                     if (props.onDone)
-                        props.onDone(`Регистрация завершена, токен: ${response.data?.createUser.token}`);
-
-                    setLoading(false);
+                        props.onDone(`Регистрация завершена, ответ GraphQL: ${JSON.stringify(response.data?.signup)}`);
                 })
                 .catch(e => {
-                    console.error(e);
-                    setErrors([{
-                        name: "email",
-                        text: e.message
-                    }]);
-                    setLoading(false);
+                    const array: ErrorType[] = [];
+
+                    if (e.name === "Error") array.push({ name: "email", text: e.message });
+
+                    setErrors(array);
 
                     if (props.onFail) props.onFail(e.message);
+                })
+                .finally(() => {
+                    setLoading(false);
                 });
         }
     }
@@ -131,13 +134,13 @@ const Form = (props: FormProps) => {
 
         <div className="row">
             <Input
-                value={data.fullName ?? ""}
+                value={data.name ?? ""}
                 onChange={handleInputChange}
-                name="fullName"
+                name="name"
                 type="text"
                 placeholder="Enter your name"
             />
-            <Error errors={errors} name="fullName" />
+            <Error errors={errors} name="name" />
         </div>
         <div className="row">
             <Input
@@ -173,6 +176,7 @@ const Form = (props: FormProps) => {
             <Radio
                 options={["Male", "Female"]}
                 name="gender"
+                value={data.gender ?? ""}
                 onChange={(e) => handleInputChange(e)}
             />
             <Error errors={errors} name="gender" />
@@ -181,6 +185,7 @@ const Form = (props: FormProps) => {
             <Checkbox
                 onChange={(e) => handleInputChange(e)}
                 name="accept"
+                checked={data.accept ?? false}
             >
                 Accept <a href="#terms">terms</a> and <a href="#conditions">conditions</a>
             </Checkbox>
